@@ -1,0 +1,145 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router0
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+ipv6 dhcp pool DHCPV6-POOL-10
+ address prefix 2001:1200:FA13:10::/64 lifetime 172800 86400
+ dns-server 2001:1200:FC13:1::2
+ domain-name sagacrestudiantes.net
+!
+ipv6 dhcp pool DHCPV6-POOL-30
+ address prefix 2001:1200:FA13:30::/64 lifetime 172800 86400
+ dns-server 2001:1200:FC13:1::2
+ domain-name sagacrestudiantes.net
+!
+ipv6 dhcp pool DHCPV6-POOL
+ address prefix 2001:1200:FA13:50::/64 lifetime 172800 86400
+ dns-server 2001:1200:FC13:1::2
+ domain-name sagacrestudiantes.net
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX1017TC90-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no ip address
+ ipv6 address 2001:1200:FE13:1::1/128
+ ipv6 ospf 10 area 0
+!
+interface FastEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+ ipv6 address 2001:1200:FC13:1::1/64
+ ipv6 ospf 10 area 0
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1.10
+ encapsulation dot1Q 10
+ no ip address
+ ipv6 traffic-filter ACL_VLAN10_GUEST in
+ ipv6 address 2001:1200:FA13:10::1/64
+ ipv6 nd managed-config-flag
+ ipv6 ospf 10 area 0
+ ipv6 dhcp server DHCPV6-POOL-10
+!
+interface FastEthernet0/1.30
+ encapsulation dot1Q 30
+ no ip address
+ ipv6 traffic-filter ACL_VLAN30_INTERNAL in
+ ipv6 address 2001:1200:FA13:30::1/64
+ ipv6 nd managed-config-flag
+ ipv6 ospf 10 area 0
+ ipv6 dhcp server DHCPV6-POOL-30
+!
+interface FastEthernet0/1.50
+ encapsulation dot1Q 50
+ no ip address
+ ipv6 traffic-filter ACL_VLAN30_INTERNAL in
+ ipv6 address 2001:1200:FA13:50::1/64
+ ipv6 address 2001:1200:FA13:50::FE/64
+ ipv6 nd managed-config-flag
+ ipv6 ospf 10 area 0
+ ipv6 dhcp server DHCPV6-POOL
+!
+interface FastEthernet0/1.90
+ encapsulation dot1Q 90
+ no ip address
+ ipv6 address 2001:1200:FA13:90::1/64
+ ipv6 ospf 10 area 0
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ipv6 router ospf 10
+ router-id 1.1.1.1
+ log-adjacency-changes
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ipv6 access-list ACL_VLAN10_GUEST
+ permit tcp any host 2001:1200:FC13:1::3 eq www
+ deny tcp any host 2001:1200:FC13:1::3 eq 443
+ permit ipv6 any any
+ipv6 access-list ACL_VLAN30_INTERNAL
+ permit tcp any host 2001:1200:FC13:1::3 eq 443
+ deny tcp any host 2001:1200:FC13:1::3 eq www
+ permit ipv6 any any
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+

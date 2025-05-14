@@ -1,0 +1,120 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R2_ESP
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+ipv6 dhcp pool DHCP-VLAN20
+ address prefix 2001:1200:FB23:20::/64 lifetime 172800 86400
+ dns-server 2001:1200:FC13:1::2
+ domain-name mad.local
+!
+ipv6 dhcp pool DHCP-VLAN40
+ address prefix 2001:1200:FB23:40::/64 lifetime 172800 86400
+ dns-server 2001:1200:FC13:1::2
+ domain-name mad.local
+!
+ipv6 dhcp pool DHCP-VLAN60
+ address prefix 2001:1200:FB23:60::/64 lifetime 172800 86400
+ dns-server 2001:1200:FC13:1::2
+ domain-name mad.local
+!
+!
+!
+!
+license udi pid CISCO2811/K9 sn FTX10170X38-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ ipv6 traffic-filter MAD-WEB-ACCESS in
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/0.20
+ encapsulation dot1Q 20
+ no ip address
+ ipv6 address 2001:1200:FB23:20::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server DHCP-VLAN20
+!
+interface FastEthernet0/0.40
+ encapsulation dot1Q 40
+ no ip address
+ ipv6 address 2001:1200:FB23:40::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server DHCP-VLAN40
+!
+interface FastEthernet0/0.60
+ encapsulation dot1Q 60
+ no ip address
+ ipv6 address 2001:1200:FB23:60::1/64
+ ipv6 nd other-config-flag
+ ipv6 dhcp server DHCP-VLAN60
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ipv6 access-list MAD-WEB-ACCESS
+ permit tcp 2001:1200:FB23:20::/64 host 2001:1200:FC13:1::3 eq www
+ deny tcp 2001:1200:FB23:20::/64 host 2001:1200:FC13:1::3 eq 443
+ permit tcp any host 2001:1200:FC13:1::3 eq 443
+ permit ipv6 any any
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
